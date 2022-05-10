@@ -1,8 +1,10 @@
 import express from 'express'
 import {Request, Response} from 'express'
 
-const app = express()
+//database
+require('../database/moongose.ts')
 
+const app = express()
 app.use(express.json())
 
 //Model
