@@ -1,41 +1,22 @@
-import express from 'express'
+import express, { response } from 'express'
 import {Request, Response} from 'express'
+import { request } from 'http'
+import mongoose from 'mongoose'
+const routerPracownicy = require('../routes/pracownicy')
+const bodyParser = require('body-parser');
 
-const app = express()
 
-app.use(express.json())
 
-//Model
-class Notatka{
-    title:string
-    content:string
-    createDate?:string
-    tags?:string[]
-    id?:number
-    constructor(title: string,content:string) {
-        this.title = title;
-        this.content = title;
-      }
- 
-}
-let Notatki:Notatka[]=[]
+const app = express();
+app.use(bodyParser.json());
+app.use('/pracownicy',routerPracownicy);
 
-app.get('/', function (req: Request, res: Response) {
-  res.send('GET Hello World')
-})
-app.post('/', function (req: Request, res: Response) {
-  console.log(req.body) // e.x. req.body.title 
-  res.status(200).send('POST Hello World')
-})
+//Routes
+app.get('/',(req,res)=>{
+  res.send('hello');
+  });
 
-app.post('/note', function (req: Request, res: Response) {
-    console.log(req.body)
-    Notatki.push(req.body)
-    console.log(Notatki)
-    res.send(Notatki)
-    
 
-  })
-  
 
-app.listen(3000)
+mongoose.connect('mongodb+srv://dawid:cichy@rest.xarzi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',()=>console.log('Connected to Database'));
+app.listen(3000);
