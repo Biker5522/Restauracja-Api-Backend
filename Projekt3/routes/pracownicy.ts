@@ -4,25 +4,68 @@ const express = require('express');
 const router = express.Router();
 const Pracownik =require('../Models/PracownikModel');
 
-
-router.get('/', (req:any, res:any) =>{
-res.send('hello word');
+//GET wyświetla wszystkich pracowników
+router.get('/',async (req:any, res:any) =>{
+try{
+    const pracownicy = await Pracownik.find();
+    res.json(pracownicy);
+}
+catch(err:any){
+    const result = (err as Error).message;
+        res.json({result});
+}
 });
 
-//POST zapis pracownika
+//POST dodanie pracownika
 router.post('/', async (req:any,res:any)=>{
  const pracownik = new Pracownik({
      imie:req.body.imie,
      nazwisko:req.body.nazwisko,
-     description:req.body.description
+     stanowisko:req.body.stanowisko
  })
  //zapis
  try{
  const savedPracownik = await pracownik.save();
  res.json(savedPracownik);
- }catch(err:any){
-    console.log(err);
+ }catch(err){
+    const result = (err as Error).message;
+        res.json({result});
  }
 });
 
+//GET wybrany pracownik
+router.get('/add',async (req:any, res:any) =>{
+    try{
+        const pracownik = await Pracownik.findById(req.params.id);
+        res.json(pracownik);
+    }
+    catch(err){
+        const result = (err as Error).message;
+        res.json({result});
+    }
+    });
+
+//Delete usuwanie pracownika
+router.delete('/:id',async (req:any, res:any) =>{
+    try{
+        const removedPracownik = await Pracownik.deleteOne({_id: req.params.id});
+        res.json('Usunieto');
+    }
+    catch(err){
+        const result = (err as Error).message;
+        res.json({result});
+    }
+    });
+
+    //PATCH usuwanie pracownika
+router.patch('/:id',async (req:any, res:any) =>{
+    try{
+        const updatedPracownik = await Pracownik.updateOne({_id: req.params.id},{Set:{imie:req.body.imie}},{Set:{nazwisko:req.body.nazwisko}},{Set:{stanowisko:req.body.stanowisko}});
+        res.json(updatedPracownik);
+    }
+    catch(err){
+        const result = (err as Error).message;
+        res.json({result});
+    }
+    });
 module.exports=router;
