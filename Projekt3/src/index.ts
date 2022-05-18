@@ -2,6 +2,7 @@ import express, { response } from 'express'
 import {Request, Response} from 'express'
 import { request } from 'http'
 import mongoose from 'mongoose'
+require("dotenv").config();
 
 const bodyParser = require('body-parser');
 const app = express();
@@ -18,7 +19,7 @@ app.get('/',(req,res)=>{
   });
 
   //Users
-const routerUsers = require('../routes/auth')
+const routerUsers = require('../routes/users/auth')
 app.use('/users',routerUsers);
 
 

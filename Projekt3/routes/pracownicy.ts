@@ -3,9 +3,10 @@ import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
 const Pracownik =require('../Models/PracownikModel');
+const verify = require('../routes/users/authToken');
 
 //GET wyświetla wszystkich pracowników
-router.get('/',async (req:any, res:any) =>{
+router.get('/',verify,async (req:any, res:any) =>{
 try{
     const pracownicy = await Pracownik.find();
     res.json(pracownicy);
