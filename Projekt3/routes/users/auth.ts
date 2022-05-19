@@ -28,7 +28,6 @@ router.post('/register', async (req:any,res:any)=>{
  
     });
 
-
     //POST LOGIN
     router.post('/login',async (req:any,res:any)=>{
         //email validation
@@ -37,7 +36,7 @@ router.post('/register', async (req:any,res:any)=>{
         //password validation
         const passVal =await (user.password == req.body.password);
     if(!passVal) return res.status(400).send('Invalid password');
-            //Token
+            //Token ustawienie i dodanie
      const token = jwt.sign({_id:user._id},process.env.TOKEN_SECRET);
      res.header('auth-token',token).send(token);
     });
