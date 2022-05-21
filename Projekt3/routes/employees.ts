@@ -1,4 +1,4 @@
-import { Express, Router } from "express";
+import { Express, Router, Response, Request } from "express";
 import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
@@ -6,19 +6,19 @@ const Employee =require('../Models/EmployeeModel');
 const verify = require('../routes/users/authToken');
 
 //GET wyświetla wszystkich pracowników
-router.get('/',verify,async (req:any, res:any) =>{
+router.get('/',verify,async (req:Request, res:Response) =>{
 try{
     const pracownicy = await Employee.find();
-    res.json(pracownicy);
+    return res.status(200).json(pracownicy);
 }
 catch(err:any){
     const result = (err as Error).message;
-        res.json({result});
+    return res.status(400).json({result});
 }
 });
 
 //POST dodanie pracownika
-router.post('/', async (req:any,res:any)=>{
+router.post('/', async (req:Request,res:Response)=>{
  const employee = new Employee({
      name:req.body.name,
      surname:req.body.surname,
@@ -27,46 +27,47 @@ router.post('/', async (req:any,res:any)=>{
  //zapis
  try{
  const savedEmployee = await employee.save();
- res.json(savedEmployee);
+ return res.status(200).json(savedEmployee);
  }catch(err){
     const result = (err as Error).message;
-        res.json({result});
+    return res.status(400).json({result});
  }
 });
 
 //GET wybrany pracownik
-router.get('/:id',async (req:any, res:any) =>{
+router.get('/:id',async (req:Request, res:Response) =>{
     try{
         const pracownik = await Employee.findById(req.params.id);
-        res.json(pracownik);
+        return res.status(200).json(pracownik);
     }
     catch(err){
         const result = (err as Error).message;
-        res.json({result});
+        return res.status(400).json({result});
     }
     });
 
 //Delete usuwanie pracownika
-router.delete('/:id',async (req:any, res:any) =>{
+router.delete('/:id',async (req:Request, res:Response) =>{
     try{
         const removedEmployee = await Employee.deleteOne({_id: req.params.id});
-        res.json('Deleted');
+        return res.status(200).json('Deleted');
     }
     catch(err){
         const result = (err as Error).message;
-        res.json({result});
+        return res.status(400).json({result});
     }
     });
 
     //PATCH usuwanie pracownika
-router.patch('/:id',async (req:any, res:any) =>{
+router.patch('/:id',async (req:Request, res:Response) =>{
     try{
         const updatedEmployee = await Employee.updateOne({_id: req.params.id},{Set:{name:req.body.name}},{Set:{surname:req.body.surname}},{Set:{position:req.body.position}});
-        res.json(updatedEmployee);
+        return res.status(200).json(updatedEmployee);
     }
     catch(err){
         const result = (err as Error).message;
-        res.json({result});
+        return res.status(400).json({result});
     }
     });
+    
 module.exports=router;

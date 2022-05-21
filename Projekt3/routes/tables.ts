@@ -2,14 +2,15 @@ import { Express, Router,Response,Request } from "express";
 import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
-const Dish =require('../Models/DishModel');
+const Table =require('../Models/TableModel');
+const Order =require('../Models/OrderModel');
 const verify = require('../routes/users/authToken');
 
-//GET wyświetla wszystkie dania
+//GET wyświetla wszystkie Stoliki
 router.get('/',async (req:Request, res:Response) =>{
 try{
-    const dishes = await Dish.find();
-    return res.status(200).json(dishes);
+    const tables = await Table.find();
+    return res.status(200).json(tables);
 }
 catch(err:any){
     const result = (err as Error).message;
@@ -17,28 +18,29 @@ catch(err:any){
 }
 });
 
-//POST dodanie dania
+//POST dodanie Stolika
 router.post('/', async (req:Request,res:Response)=>{
- const dish = new Dish({
+ const table = new Table({
      name:req.body.name,
-     category:req.body.category,
-     price:req.body.price
+     numberOfPeople:req.body.numberOfPeople,
+     status:req.body.status
  })
  //zapis
  try{
- const savedDish = await dish.save();
- return res.status(200).json(savedDish);
+ const savedTable = await table.save();
+ return res.status(200).json(savedTable);
  }catch(err){
     const result = (err as Error).message;
     return res.status(400).json({result});
  }
 });
 
-//GET wybrane danie
+//GET wybrany stolik
 router.get('/:id',async (req:Request, res:Response) =>{
     try{
-        const dish = await Dish.findById(req.params.id);
-        return res.status(200).json(dish);
+        const table = await Table.findById(req.params.id);
+        const orders = await Order.find({table:req.params.id})
+        return res.status(200).json(table+orders);
     }
     catch(err){
         const result = (err as Error).message;
@@ -49,7 +51,7 @@ router.get('/:id',async (req:Request, res:Response) =>{
 //Delete usuwanie dania
 router.delete('/:id',async (req:Request, res:Response) =>{
     try{
-        const removedDish = await Dish.deleteOne({_id: req.params.id});
+        const removedTable = await Table.deleteOne({_id: req.params.id});
         return res.status(200).json('Deleted');
     }
     catch(err){
@@ -61,7 +63,7 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     //PATCH modyfikacja dania
 router.patch('/:id',async (req:Request, res:Response) =>{
     try{
-        const updatedDish = await Dish.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
+        const updatedTable = await Table.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
         return res.status(200).json('Updated');
     }
     catch(err){
@@ -69,5 +71,6 @@ router.patch('/:id',async (req:Request, res:Response) =>{
         return res.status(400).json({result});
     }
     });
+
     
 module.exports=router;

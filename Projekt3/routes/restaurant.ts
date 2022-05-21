@@ -1,4 +1,4 @@
-import { Express, Router } from "express";
+import { Express, Router ,Response, Request} from "express";
 import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
@@ -6,19 +6,19 @@ const Restaurant =require('../Models/RestaurantModel');
 const verify = require('../routes/users/authToken');
 
 //GET wyświetla restauracje
-router.get('/',async (req:any, res:any) =>{
+router.get('/',async (req:Request, res:Response) =>{
 try{
     const restaurant = await Restaurant.find();
-    res.json(restaurant);
+    return res.status(200).json(restaurant);
 }
 catch(err:any){
     const result = (err as Error).message;
-        res.json({result});
+    return res.status(400).json({result});
 }
 });
 
 //POST dodanie restauracji
-router.post('/add', async (req:any,res:any)=>{
+router.post('/add', async (req:Request,res:Response)=>{
  const restaurant = new Restaurant({
      name:req.body.name,
      adres:req.body.adres,
@@ -30,23 +30,24 @@ router.post('/add', async (req:any,res:any)=>{
  //zapis
  try{
  const savedRestaurant = await restaurant.save();
- res.json(savedRestaurant);
+ return res.status(200).json(savedRestaurant);
  }catch(err){
     const result = (err as Error).message;
-        res.json({result});
+    return res.status(400).json({result});
  }
 });
 
 
     //PATCH modyfikacja danych restauracji
-router.patch('/:id',verify,async (req:any, res:any) =>{
+router.patch('/:id',verify,async (req:Request, res:Response) =>{
     try{
         const updatedRestaurant = await Restaurant.updateOne({_id: req.params.id},{Set:{name:req.body.name}},{Set:{adres:req.body.adres}},{Set:{phone:req.body.phone}},{Set:{www:req.body.www}},{Set:{nip:req.body.nip}});
-        res.json(updatedRestaurant);
+        return res.status(200).json(updatedRestaurant);
     }
     catch(err){
         const result = (err as Error).message;
-        res.json({result});
+        return res.status(400).json({result});
     }
     });
+    
 module.exports=router;

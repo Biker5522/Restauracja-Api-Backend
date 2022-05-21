@@ -2,14 +2,14 @@ import { Express, Router,Response,Request } from "express";
 import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
-const Dish =require('../Models/DishModel');
+const Product =require('../Models/ProductModel');
 const verify = require('../routes/users/authToken');
 
 //GET wyświetla wszystkie dania
 router.get('/',async (req:Request, res:Response) =>{
 try{
-    const dishes = await Dish.find();
-    return res.status(200).json(dishes);
+    const products = await Product.find();
+    return res.status(200).json(products);
 }
 catch(err:any){
     const result = (err as Error).message;
@@ -19,14 +19,14 @@ catch(err:any){
 
 //POST dodanie dania
 router.post('/', async (req:Request,res:Response)=>{
- const dish = new Dish({
+ const product = new Product({
      name:req.body.name,
      category:req.body.category,
      price:req.body.price
  })
  //zapis
  try{
- const savedDish = await dish.save();
+ const savedDish = await product.save();
  return res.status(200).json(savedDish);
  }catch(err){
     const result = (err as Error).message;
@@ -37,8 +37,8 @@ router.post('/', async (req:Request,res:Response)=>{
 //GET wybrane danie
 router.get('/:id',async (req:Request, res:Response) =>{
     try{
-        const dish = await Dish.findById(req.params.id);
-        return res.status(200).json(dish);
+        const product = await Product.findById(req.params.id);
+        return res.status(200).json(product);
     }
     catch(err){
         const result = (err as Error).message;
@@ -49,7 +49,7 @@ router.get('/:id',async (req:Request, res:Response) =>{
 //Delete usuwanie dania
 router.delete('/:id',async (req:Request, res:Response) =>{
     try{
-        const removedDish = await Dish.deleteOne({_id: req.params.id});
+        const removedProduct = await Product.deleteOne({_id: req.params.id});
         return res.status(200).json('Deleted');
     }
     catch(err){
@@ -61,7 +61,7 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     //PATCH modyfikacja dania
 router.patch('/:id',async (req:Request, res:Response) =>{
     try{
-        const updatedDish = await Dish.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
+        const updatedProduct = await Product.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
         return res.status(200).json('Updated');
     }
     catch(err){
