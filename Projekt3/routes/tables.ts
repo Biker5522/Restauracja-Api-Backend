@@ -48,7 +48,7 @@ router.get('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-//Delete usuwanie dania
+//Delete usuwanie stolika
 router.delete('/:id',async (req:Request, res:Response) =>{
     try{
         const removedTable = await Table.deleteOne({_id: req.params.id});
@@ -60,7 +60,7 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-    //PATCH modyfikacja dania
+    //PATCH modyfikacja stolika
 router.patch('/:id',async (req:Request, res:Response) =>{
     try{
         const updatedTable = await Table.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});

@@ -1,11 +1,11 @@
 import express, { response } from 'express'
 import {Request, Response} from 'express'
-import { request } from 'http'
 import mongoose from 'mongoose'
 require("dotenv").config();
 
 const bodyParser = require('body-parser');
 const app = express();
+app.set('json spaces', 2)
 app.use(express.json());
 
 //Routes
@@ -41,8 +41,12 @@ app.use(express.json());
   const routerOrders = require('../routes/orders')
   app.use('/Zamowienia',routerOrders);
 
-app.get('/',(req,res)=>{
-  res.send('Restauracja World');
+  //Raporty
+  const routerReports = require('../routes/reports')
+  app.use('/Raporty',routerReports);
+
+  app.get('/',(req,res)=>{
+    res.send('Restauracja World');
   });
 
 //Database

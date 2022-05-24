@@ -41,7 +41,16 @@ router.post('/add', async (req:Request,res:Response)=>{
     //PATCH modyfikacja danych restauracji
 router.patch('/:id',verify,async (req:Request, res:Response) =>{
     try{
-        const updatedRestaurant = await Restaurant.updateOne({_id: req.params.id},{Set:{name:req.body.name}},{Set:{adres:req.body.adres}},{Set:{phone:req.body.phone}},{Set:{www:req.body.www}},{Set:{nip:req.body.nip}});
+        
+        const updatedRestaurant = await Restaurant.findByIdAndUpdate({_id: req.params.id},{ 
+            name:req.body.name,
+            www:req.body.www,
+            phone:req.body.phone,
+            nip:req.body.nip,
+            email:req.body.email,
+            adres:req.body.adres,
+        }
+);
         return res.status(200).json(updatedRestaurant);
     }
     catch(err){

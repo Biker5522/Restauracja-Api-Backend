@@ -17,12 +17,12 @@ catch(err:any){
 }
 });
 
-//POST dodanie dania
+//POST dodanie produktu
 router.post('/', async (req:Request,res:Response)=>{
  const product = new Product({
      name:req.body.name,
-     category:req.body.category,
-     price:req.body.price
+     quantity:req.body.quantity,
+     unitOfMeasure:req.body.unitOfMeasure
  })
  //zapis
  try{
@@ -34,7 +34,7 @@ router.post('/', async (req:Request,res:Response)=>{
  }
 });
 
-//GET wybrane danie
+//GET wybrany produkt
 router.get('/:id',async (req:Request, res:Response) =>{
     try{
         const product = await Product.findById(req.params.id);
@@ -46,7 +46,7 @@ router.get('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-//Delete usuwanie dania
+//Delete usuwanie produktu
 router.delete('/:id',async (req:Request, res:Response) =>{
     try{
         const removedProduct = await Product.deleteOne({_id: req.params.id});
@@ -58,10 +58,16 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-    //PATCH modyfikacja dania
+    //PUT modyfikacja produktu
 router.patch('/:id',async (req:Request, res:Response) =>{
-    try{
-        const updatedProduct = await Product.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
+    try{   
+        const updatedProduct = await Product.findByIdAndUpdate({_id: req.params.id},{ 
+            name:req.body.name,
+            price:req.body.price,
+            quantity:req.body.quantity,
+            unitOfMeasure:req.body.unitOfMeasure,
+}
+);
         return res.status(200).json('Updated');
     }
     catch(err){

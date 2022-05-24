@@ -3,7 +3,9 @@ import mongoose from 'mongoose'
 const ProductSchema = new mongoose.Schema({
   name:{
     type:String,
-    required:true
+    required:true,
+    min:3,
+    max:25,
   },
   price:{
     type:String,

@@ -10,20 +10,20 @@ const OrderSchema = new mongoose.Schema({
   },
   status:{
     type:String,
-    enum:['złożone','w realizacji','zrealizowane','rachunek'],
-    default:'zlożone'
+    enum:['submitted','processed','completed','bill'],
+    default:'submitted'
   },
   price:{
     type:Number,
     default:0
   },
-    positions:[{
+  positions:[{
         type: mongoose.Schema.Types.ObjectId, ref:'Dish',
-    }],
-    date:{
-      type:Date,
-      default:Date.now()
-    }
+  }],
+  date:{
+    type:Date,
+    default:Date.now()
+  }
   });
 
 module.exports = mongoose.model('Order',OrderSchema);

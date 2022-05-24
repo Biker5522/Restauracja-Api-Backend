@@ -3,11 +3,15 @@
     const DishSchema = new mongoose.Schema({
       name:{
         type:String,
-        required:true
+        required:true,
+        min:3,
+        max:15,
       },
       category:{
         type:String,
-        required:true
+        required:true,
+        min:3,
+        max:15,
       },
       price:{
         type:Number,

@@ -59,9 +59,9 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     });
 
     //PATCH modyfikacja dania
-router.patch('/:id',async (req:Request, res:Response) =>{
+router.put('/:id',async (req:Request, res:Response) =>{
     try{
-        const updatedDish = await Dish.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
+        const updatedDish = await Dish.findByIdAndUpdate({_id: req.params.id},{name:req.body.name,category:req.body.category,price:req.body.price});
         return res.status(200).json('Updated');
     }
     catch(err){

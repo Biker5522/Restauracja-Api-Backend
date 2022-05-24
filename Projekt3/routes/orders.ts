@@ -8,10 +8,10 @@ const Employee =require('../Models/EmployeeModel');
 const Dish =require('../Models/DishModel');
 const verify = require('../routes/users/authToken');
 
-//GET wyświetla wszystkie dania
+//GET wyświetla wszystkie zamówienia
 router.get('/',async (req:Request, res:Response) =>{
 try{
-    const orders = await Order.find();
+    const orders = await Order.find().populate('employee').populate('table');
     return res.status(200).json(orders);
 }
 catch(err:any){
@@ -20,27 +20,30 @@ catch(err:any){
 }
 });
 
-//POST dodanie dania
+//POST dodanie zamówienia
 router.post('/', async (req:Request,res:Response)=>{
  const order = new Order({
      table:req.body.table,
      employee:req.body.employee,
      status:req.body.status,
      price:req.body.price,
-     positions:req.body.positions
+     positions:req.body.positions,
+     date:req.body.date
  })
- //zapis
+
+    //walidacja stolika pracownika i dań
  const tableExist = await Table.findById(req.body.table);
  if(!tableExist)return res.status(400).json('No such table');
 
  const employeeExist = await Employee.findById(req.body.employee);
  if(!employeeExist)return res.status(400).json('No such employee');
-
+ 
  for (const element of order.positions) {
-    const DishExist = await Dish.findById(element);
+ const DishExist = await Dish.findById(element);
  if(!DishExist)return res.status(400).json('No such Dish');
   }
 
+    //wyliczenie ceny
  if(order.price==0){
     for (const element of order.positions) {
         const DishExisting = await Dish.findById(element);
@@ -49,7 +52,7 @@ router.post('/', async (req:Request,res:Response)=>{
        console.log(1);
       }
  }
-
+    //zapis zamówienia
  try{
  const savedOrder = await order.save();
  return res.status(200).json(savedOrder);
@@ -59,7 +62,7 @@ router.post('/', async (req:Request,res:Response)=>{
  }
 });
 
-//GET wybrane danie
+//GET wybrane Zamówienie
 router.get('/:id',async (req:Request, res:Response) =>{
     try{
         const order = await Order.findById(req.params.id);
@@ -71,7 +74,7 @@ router.get('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-//Delete usuwanie dania
+//Delete usuwanie zamówienia
 router.delete('/:id',async (req:Request, res:Response) =>{
     try{
         const removedBooking = await Order.deleteOne({_id: req.params.id});
@@ -83,10 +86,16 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-    //PATCH modyfikacja dania
+    //PUT modyfikacja zamówienia
 router.patch('/:id',async (req:Request, res:Response) =>{
     try{
-        const updatedOrder = await Order.findByIdAndUpdate({_id: req.params.id},{Set:{name:req.body.name}},{Set:{category:req.body.category}},{Set:{price:req.body.price}});
+        const updatedOrder = await Order.findByIdAndUpdate({_id: req.params.id},{ 
+            table:req.body.table,
+            employee:req.body.employee,
+            price:req.body.price,
+            positions:req.body.positions,
+            date:req.body.date,
+            status:req.body.status});
         return res.status(200).json('Updated');
     }
     catch(err){

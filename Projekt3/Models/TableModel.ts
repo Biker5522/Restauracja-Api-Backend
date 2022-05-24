@@ -4,7 +4,9 @@
       name:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        min:6,
+        max:10,
       },
       numberOfPeople:{
         type:Number,
@@ -12,8 +14,8 @@
       },
       status:{
         type:String,
-        enum:['wolny','zajety','niedostepny'],
-        default:'wolny'
+        enum:['free','occupied','unavailable'],
+        default:'free'
       },
     });
     

@@ -3,15 +3,21 @@ import mongoose from 'mongoose'
 const EmployeeSchema = new mongoose.Schema({
   name:{
     type:String,
-    required:true
+    required:true,
+    min:3,
+    max:15,
   },
   surname:{
     type:String,
-    required:true
+    required:true,
+    min:3,
+    max:15,
   },
   position:{
     type:String,
-    required:false
+    required:false,
+    min:3,
+    max:10,
   },
 });
 

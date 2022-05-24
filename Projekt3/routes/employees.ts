@@ -58,10 +58,13 @@ router.delete('/:id',async (req:Request, res:Response) =>{
     }
     });
 
-    //PATCH usuwanie pracownika
-router.patch('/:id',async (req:Request, res:Response) =>{
+    //PUT modyfikacja pracownika
+router.put('/:id',async (req:Request, res:Response) =>{
     try{
-        const updatedEmployee = await Employee.updateOne({_id: req.params.id},{Set:{name:req.body.name}},{Set:{surname:req.body.surname}},{Set:{position:req.body.position}});
+        const updatedEmployee = await Employee.findByIdAndUpdate({_id: req.params.id},{ 
+            name:req.body.name,
+            surname:req.body.surname,
+            position:req.body.position});
         return res.status(200).json(updatedEmployee);
     }
     catch(err){
