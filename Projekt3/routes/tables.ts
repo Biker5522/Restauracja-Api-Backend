@@ -1,15 +1,25 @@
 import { Express, Router,Response,Request } from "express";
-import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
 const Table =require('../Models/TableModel');
 const Order =require('../Models/OrderModel');
+const Booking =require('../Models/BookingModel');
 const verify = require('../routes/users/authToken');
 
 //GET wyświetla wszystkie Stoliki
 router.get('/',async (req:Request, res:Response) =>{
 try{
     const tables = await Table.find();
+    const date:Date = new Date(Date.now());
+    //Sprawdza czy stolik jest zajęty
+   for await(const tableItem of tables){
+        var checkTable:JSON[]= await Booking.find({table:tableItem._id})
+        .where('start').lt(date)
+        .where('end').gt(date)
+        if (checkTable.length==0) {tableItem.status='free'}
+        else{tableItem.status='occupied'}   
+    }
+    
     return res.status(200).json(tables);
 }
 catch(err:any){
@@ -71,6 +81,7 @@ router.patch('/:id',async (req:Request, res:Response) =>{
         return res.status(400).json({result});
     }
     });
-
+    
+        
     
 module.exports=router;

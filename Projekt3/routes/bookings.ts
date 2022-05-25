@@ -22,7 +22,8 @@ catch(err:any){
 
 //POST dodanie rezerwacji
 router.post('/', async (req:Request,res:Response)=>{
-    
+    const table = Table.find();
+    const bookings = Booking.find();
  const booking = new Booking({
      table:req.body.table,
      start:req.body.start,
@@ -34,6 +35,17 @@ router.post('/', async (req:Request,res:Response)=>{
  })
  const tableExist = await Table.findById(req.body.table);
  if(!tableExist)return res.status(404).json('No such table');
+
+ //sprawdza Czy stoilik jest zajęty wtedy
+const zajętyStolik = Booking.find({table:booking.table})
+
+ for await(const booking of bookings ){
+    var checkBooking:JSON[]= await Booking.find({table:booking.table})
+    .where('start').gt(booking.start).ls(booking.end)
+    .where('end').gt(booking.start).gt(booking.end)
+    if (checkBooking.length!=0) {return res.status(400).json('Stolik jest zajęty');} 
+}
+
 
  //zapis
  try{  
