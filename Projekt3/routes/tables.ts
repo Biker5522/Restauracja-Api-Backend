@@ -12,7 +12,7 @@ router.get('/',async (req:Request, res:Response) =>{
 try{
     const tables = await Table.find(); 
     const date = Date.now();
-    //Check if Table is in use now
+    //Sprawdza czy stolik jest w użyciu
     for await(const tableItem of tables){
         var checkTable:JSON[]= await Booking.find({table:tableItem._id})
         .where('start').lt(date)
