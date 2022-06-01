@@ -10,7 +10,9 @@ const verify = require('../routes/users/authToken');
 router.get('/',async (req:Request, res:Response) =>{
 try{
     //Powiazanie stolików
+    
    const bookings = await Booking.find().populate('table');
+   
     return res.status(200).json(bookings);
    //})
 }

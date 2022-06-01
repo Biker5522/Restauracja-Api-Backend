@@ -8,17 +8,22 @@ const ProductSchema = new mongoose.Schema({
     max:25,
   },
   price:{
-    type:String,
-    required:true
+    type:Number,
+    required:true,
   },
   quantity:{
     type:Number,
-    required:true
+    required:true,
   },
   unitOfMeasure:{
     type:String,
-    enum:['kg','g','ml','-'],
-    default:'-'
+    enum:['kg','g','ml','-','l'],
+    default:'-',
+  },
+  necessity:{
+    type:String,
+    enum:['yes','no'],
+    default:'no',
   },
 });
 

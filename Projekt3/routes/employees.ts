@@ -9,6 +9,7 @@ const verify = require('../routes/users/authToken');
 router.get('/',verify,async (req:Request, res:Response) =>{
 try{
     const pracownicy = await Employee.find();
+    
     return res.status(200).json(pracownicy);
 }
 catch(err:any){
@@ -65,7 +66,7 @@ router.put('/:id',async (req:Request, res:Response) =>{
             name:req.body.name,
             surname:req.body.surname,
             position:req.body.position});
-        return res.status(200).json(updatedEmployee);
+        return res.status(200).json("Updated");
     }
     catch(err){
         const result = (err as Error).message;

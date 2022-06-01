@@ -51,4 +51,4 @@ app.use(express.json());
 
 //Database
 mongoose.connect('mongodb+srv://dawid:cichy@rest.xarzi.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',()=>console.log('Connected to Database'));
-app.listen(3000,()=>console.log('Server Running'));
+app.listen(3011,()=>console.log('Server Running'));

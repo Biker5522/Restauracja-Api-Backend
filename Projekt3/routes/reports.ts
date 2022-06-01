@@ -6,7 +6,8 @@ const Product =require('../Models/ProductModel');
 const Employee =require('../Models/EmployeeModel');
 const Order =require('../Models/OrderModel');
 const verify = require('../routes/users/authToken');
-//GET wyświetla wszystkie dania
+
+//GET Wyświetla wszystkie zamówienia dla danego kelnera
 router.get('/Kelnerzy',async (req:Request, res:Response) =>{
 try{
     const employees = await Employee.find();
@@ -25,6 +26,7 @@ catch(err:any){
     return res.status(400).json({result});
 }
 });
+//Zwraca zamówienia w danym przedziale
 router.get('/Zamowienia/:start/:end',async (req:Request, res:Response) =>{
     try{
         var returnList:any[]=[];
@@ -41,6 +43,7 @@ router.get('/Zamowienia/:start/:end',async (req:Request, res:Response) =>{
         return res.status(400).json({result});
     }
     });
+    //Zlicza Przychody z danego przedziału
     router.get('/Przychody/:start/:end',async (req:Request, res:Response) =>{
         try{
             var income:Number = 0;

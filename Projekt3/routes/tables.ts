@@ -1,20 +1,32 @@
+import { json } from "body-parser";
 import { Express, Router,Response,Request } from "express";
 import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
 const Table =require('../Models/TableModel');
 const Order =require('../Models/OrderModel');
+const Booking =require('../Models/BookingModel');
 const verify = require('../routes/users/authToken');
 
 //GET wyświetla wszystkie Stoliki
 router.get('/',async (req:Request, res:Response) =>{
 try{
-    const tables = await Table.find();
-    return res.status(200).json(tables);
+    const tables = await Table.find(); 
+    const date = Date.now();
+    //Check if Table is in use now
+    for await(const tableItem of tables){
+        var checkTable:JSON[]= await Booking.find({table:tableItem._id})
+        .where('start').lt(date)
+        .where('end').gt(date)
+        if(tableItem.status=="unavailable"){}
+        else if (checkTable.length==0) {tableItem.status='free'}
+        else{tableItem.status='occupied'}   
+    }
+    return res.status(200).json({tables});
 }
 catch(err:any){
     const result = (err as Error).message;
-    return res.status(200).json({result});
+    return res.status(400).json({result});
 }
 });
 
@@ -47,6 +59,30 @@ router.get('/:id',async (req:Request, res:Response) =>{
         return res.status(400).json({result});
     }
     });
+    //GET wybrany stolik w danym dniu
+router.get('/wybierz/:day/:numberOfPeople',async (req:Request, res:Response) =>{
+    try{
+        const date = req.params.day;
+        const people:Number = +req.params.numberOfPeople-1;
+        const tables = await Table.find().where('numberOfPeople').gt(people); 
+        let result:JSON[]=[];
+        //Check if Table is in use now
+        for await(const tableItem of tables){
+            var checkTable:JSON[]= await Booking.find({table:tableItem._id})
+            .where('start').lt(date)
+            .where('end').gt(date)
+            if(tableItem.status=="unavailable"){}
+            else if (checkTable.length==0) {result+=tableItem}
+            
+    }
+    return res.status(200).json({result});
+    }
+    catch(err){
+        const result = (err as Error).message;
+        return res.status(400).json({result});
+    }
+    });
+    
 
 //Delete usuwanie stolika
 router.delete('/:id',async (req:Request, res:Response) =>{
