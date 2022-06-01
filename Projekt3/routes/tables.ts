@@ -1,6 +1,5 @@
 import { json } from "body-parser";
 import { Express, Router,Response,Request } from "express";
-import { appendFile } from "fs";
 const express = require('express');
 const router = express.Router();
 const Table =require('../Models/TableModel');
@@ -107,6 +106,7 @@ router.patch('/:id',async (req:Request, res:Response) =>{
         return res.status(400).json({result});
     }
     });
-
+    
+        
     
 module.exports=router;
