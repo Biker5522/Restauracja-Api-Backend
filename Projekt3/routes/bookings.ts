@@ -26,30 +26,31 @@ router.post('/', async (req:Request,res:Response)=>{
     const bookings = Booking.find();
  const booking = new Booking({
      table:req.body.table,
-     start:new Date(req.body.start),
-     end:new Date(req.body.end),
+     start:req.body.start,
+     end:req.body.end,
      client:{
          name:req.body.client.name,
          surname:req.body.client.surname,
      }, 
  })
+ //Walidacja dat
+ if(req.body.start>=req.body.end)return res.status(404).json('Start date must be earlier than end date');
+ 
  //sprawdza czy istnieje dany stolik
  const tableExist = await Table.findById(req.body.table);
  if(!tableExist)return res.status(404).json('No such table');
 
- const start1 = new Date(req.body.start).getTime();
- const end1 = new Date(req.body.end).getTime();
-
 //sprawdza czy można w tym czasie zarezerwować stolik
-for await(const booking of bookings ){
-    let checkBooking:JSON[]= await Booking.find( { $or: [
-        {$and:[{ start1: { $gt: booking.start.getTime() } }, {end1: { $ls: booking.end.getTime() } }] },
-        {$and:[{ start1: { $gt: booking.start.getTime() } }, {end1: { $lt: booking.end.getTime() } }] },
-        {$and:[{ start1: { $lt: booking.start.getTime() } }, {end1: { $lt: booking.end.getTime() } },{end1: { $gt: booking.start.getTime() } }] },
-        {$and:[{ start1: { $gt: booking.start.getTime() } }, {end1: { $lt: booking.end.getTime() } },{start1: { $lt: booking.end.getTime() } }] }
-         ] }) 
-    if (checkBooking.length!=0) {return res.status(400).json('Stolik jest zajęty');} 
-}
+ for await(var book of bookings){
+     if(book.table==req.body.table&&
+     (((new Date(book.start)>=new Date(req.body.start))&&(new Date(book.start)<new Date(req.body.end))&&(new Date(book.end)>new Date(req.body.start))&&(new Date(book.end)<=new Date(req.body.end)))||
+     ((new Date(book.start)<=new Date(req.body.start))&&(new Date(book.start)<new Date(req.body.end))&&(new Date(book.end)>new Date(req.body.start))&&(new Date(book.end)>new Date(req.body.end)))||
+     ((new Date(book.start)>=new Date(req.body.start))&&(new Date(book.start)<new Date(req.body.end))&&(new Date(book.end)>new Date(req.body.start))&&(new Date(book.end)>new Date(req.body.end)))||
+     ((new Date(book.start)<new Date(req.body.start))&&(new Date(book.start)<new Date(req.body.end))&&(new Date(book.end)>new Date(req.body.start))&&(new Date(book.end)<new Date(req.body.end)))
+     )){return res.status(400).json('Stolik jest zajęty')}
+
+ }
+    
  //zapis
  try{  
  const savedBooking = await booking.save();
